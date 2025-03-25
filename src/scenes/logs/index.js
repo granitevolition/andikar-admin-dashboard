@@ -8,6 +8,7 @@ import {
   MenuItem,
   IconButton,
   Chip,
+  Alert
 } from "@mui/material";
 import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import { tokens } from "../../theme";
@@ -26,6 +27,7 @@ const Logs = () => {
     startDate: "",
     endDate: "",
   });
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     fetchLogs();
@@ -33,118 +35,25 @@ const Logs = () => {
 
   const fetchLogs = async () => {
     setLoading(true);
+    setError(null);
     try {
-      // In a real application, we would call the API
-      // const response = await axios.get(\`\${process.env.REACT_APP_API_URL}/logs\`, {
-      //   headers: {
-      //     Authorization: \`Bearer \${localStorage.getItem('token')}\`
-      //   },
-      //   params: {
-      //     level: filter.level !== 'all' ? filter.level : undefined,
-      //     service: filter.service !== 'all' ? filter.service : undefined,
-      //     startDate: filter.startDate || undefined,
-      //     endDate: filter.endDate || undefined,
-      //   }
-      // });
-      // setLogs(response.data);
-
-      // For now, let's set mock data
-      setLogs([
-        {
-          id: 1,
-          timestamp: "2025-03-24T09:12:34Z",
-          level: "INFO",
-          message: "User johndoe logged in successfully",
-          service: "auth",
-          requestId: "req-123456",
-          userId: 1,
+      const response = await axios.get(`${process.env.REACT_APP_API_URL}/logs`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`
         },
-        {
-          id: 2,
-          timestamp: "2025-03-24T09:15:22Z",
-          level: "ERROR",
-          message: "Failed to process payment: Invalid card information",
-          service: "payments",
-          requestId: "req-123457",
-          userId: 2,
-        },
-        {
-          id: 3,
-          timestamp: "2025-03-24T09:20:15Z",
-          level: "INFO",
-          message: "API request processed successfully",
-          service: "humanize",
-          requestId: "req-123458",
-          userId: 1,
-        },
-        {
-          id: 4,
-          timestamp: "2025-03-24T09:25:02Z",
-          level: "WARNING",
-          message: "Rate limit approaching for user janedoe",
-          service: "api-gateway",
-          requestId: "req-123459",
-          userId: 2,
-        },
-        {
-          id: 5,
-          timestamp: "2025-03-24T09:30:45Z",
-          level: "ERROR",
-          message: "Database connection failed",
-          service: "database",
-          requestId: "req-123460",
-          userId: null,
-        },
-        {
-          id: 6,
-          timestamp: "2025-03-24T09:35:18Z",
-          level: "INFO",
-          message: "New user registered: bobsmith",
-          service: "auth",
-          requestId: "req-123461",
-          userId: 3,
-        },
-        {
-          id: 7,
-          timestamp: "2025-03-24T09:40:27Z",
-          level: "DEBUG",
-          message: "Cache hit ratio: 0.78",
-          service: "cache",
-          requestId: "req-123462",
-          userId: null,
-        },
-        {
-          id: 8,
-          timestamp: "2025-03-24T09:45:33Z",
-          level: "INFO",
-          message: "Scheduled task completed: cleanup-old-sessions",
-          service: "scheduler",
-          requestId: "req-123463",
-          userId: null,
-        },
-        {
-          id: 9,
-          timestamp: "2025-03-24T09:50:16Z",
-          level: "ERROR",
-          message: "Failed to send email: SMTP connection timeout",
-          service: "notifications",
-          requestId: "req-123464",
-          userId: 1,
-        },
-        {
-          id: 10,
-          timestamp: "2025-03-24T09:55:02Z",
-          level: "WARNING",
-          message: "API key about to expire for user johndoe",
-          service: "api-gateway",
-          requestId: "req-123465",
-          userId: 1,
-        },
-      ]);
-
+        params: {
+          level: filter.level !== 'all' ? filter.level : undefined,
+          service: filter.service !== 'all' ? filter.service : undefined,
+          startDate: filter.startDate || undefined,
+          endDate: filter.endDate || undefined,
+        }
+      });
+      setLogs(response.data);
       setLoading(false);
     } catch (err) {
       console.error("Error fetching logs:", err);
+      setError("Failed to fetch logs. Please try again.");
+      setLogs([]);
       setLoading(false);
     }
   };
@@ -253,6 +162,12 @@ const Logs = () => {
           <RefreshIcon />
         </IconButton>
       </Box>
+
+      {error && (
+        <Alert severity="error" sx={{ mt: 2, mb: 2 }}>
+          {error}
+        </Alert>
+      )}
 
       {/* Filters */}
       <Box
@@ -366,10 +281,10 @@ const Logs = () => {
             backgroundColor: colors.blueAccent[700],
           },
           "& .MuiCheckbox-root": {
-            color: \`\${colors.greenAccent[200]} !important\`,
+            color: `${colors.greenAccent[200]} !important`,
           },
           "& .MuiDataGrid-toolbarContainer .MuiButton-text": {
-            color: \`\${colors.grey[100]} !important\`,
+            color: `${colors.grey[100]} !important`,
           },
         }}
       >
@@ -383,6 +298,7 @@ const Logs = () => {
               sortModel: [{ field: 'timestamp', sort: 'desc' }],
             },
           }}
+          getRowId={(row) => row.id || row.timestamp + row.message}
         />
       </Box>
     </Box>
