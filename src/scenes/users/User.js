@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import {
   Box,
@@ -28,14 +28,14 @@ import {
 import { tokens } from "../../theme";
 import Header from "../../components/Header";
 import { DataGrid } from "@mui/x-data-grid";
-import { ResponsiveLine } from "@nivo/line";
+// import { ResponsiveLine } from "@nivo/line";
 import { ResponsivePie } from "@nivo/pie";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import BlockIcon from "@mui/icons-material/Block";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import DeleteIcon from "@mui/icons-material/DeleteOutlined";
 import EditIcon from "@mui/icons-material/Edit";
-import axios from "axios";
+// import axios from "axios";
 
 const User = () => {
   const theme = useTheme();
@@ -56,11 +56,7 @@ const User = () => {
   });
   const [error, setError] = useState(null);
 
-  useEffect(() => {
-    fetchUserData();
-  }, [id]);
-
-  const fetchUserData = async () => {
+  const fetchUserData = useCallback(async () => {
     setLoading(true);
     try {
       // In a real application, we would call the API
@@ -175,7 +171,11 @@ const User = () => {
       setError("Failed to fetch user data. Please try again.");
       setLoading(false);
     }
-  };
+  }, [id]);
+
+  useEffect(() => {
+    fetchUserData();
+  }, [fetchUserData]);
 
   const handleTabChange = (event, newValue) => {
     setTabValue(newValue);

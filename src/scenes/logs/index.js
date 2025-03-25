@@ -1,9 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   Box,
   Button,
   useTheme,
-  Typography,
   TextField,
   MenuItem,
   IconButton,
@@ -29,11 +28,7 @@ const Logs = () => {
   });
   const [error, setError] = useState(null);
 
-  useEffect(() => {
-    fetchLogs();
-  }, []);
-
-  const fetchLogs = async () => {
+  const fetchLogs = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
@@ -56,7 +51,11 @@ const Logs = () => {
       setLogs([]);
       setLoading(false);
     }
-  };
+  }, [filter]);
+
+  useEffect(() => {
+    fetchLogs();
+  }, [fetchLogs]);
 
   const handleFilterChange = (event) => {
     setFilter({
