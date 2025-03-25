@@ -1,5 +1,4 @@
-// Mock data for development and testing
-
+// Mock data for the dashboard
 export const mockTransactions = [
   {
     txId: "tx-001",
@@ -45,35 +44,7 @@ export const mockTransactions = [
   },
 ];
 
-export const mockApiData = [
-  {
-    id: "humanize",
-    color: "hsl(104, 70%, 50%)",
-    data: [
-      { x: "Jan", y: 1200 },
-      { x: "Feb", y: 1500 },
-      { x: "Mar", y: 1800 },
-      { x: "Apr", y: 2100 },
-      { x: "May", y: 2400 },
-      { x: "Jun", y: 2700 },
-      { x: "Jul", y: 3000 },
-    ],
-  },
-  {
-    id: "detect",
-    color: "hsl(291, 70%, 50%)",
-    data: [
-      { x: "Jan", y: 800 },
-      { x: "Feb", y: 1000 },
-      { x: "Mar", y: 1300 },
-      { x: "Apr", y: 1500 },
-      { x: "May", y: 1700 },
-      { x: "Jun", y: 2000 },
-      { x: "Jul", y: 2300 },
-    ],
-  },
-];
-
+// Mock user data
 export const mockUsers = [
   {
     id: 1,
@@ -104,6 +75,7 @@ export const mockUsers = [
   },
 ];
 
+// Mock API keys data
 export const mockApiKeys = [
   {
     id: 1,
@@ -137,6 +109,7 @@ export const mockApiKeys = [
   },
 ];
 
+// Mock logs data
 export const mockLogs = [
   {
     id: 1,
@@ -164,44 +137,33 @@ export const mockLogs = [
     service: "humanize",
     requestId: "req-123458",
     userId: 1,
-  }
+  },
 ];
 
-export const mockTransactionData = [
+// Mock API usage data
+export const mockApiUsage = [
   {
-    id: "tx-001",
-    amount: 49.99,
-    currency: "USD",
-    status: "successful",
-    paymentMethod: "credit_card",
-    userId: 1,
-    email: "john@example.com",
-    description: "API Access - Premium Plan",
-    createdAt: "2025-03-24T10:30:45Z",
-    updatedAt: "2025-03-24T10:31:15Z",
+    id: "Humanize",
+    label: "Humanize",
+    value: 45,
+    color: "hsl(104, 70%, 50%)",
   },
   {
-    id: "tx-002",
-    amount: 199.99,
-    currency: "USD",
-    status: "successful",
-    paymentMethod: "paypal",
-    userId: 2,
-    email: "jane@example.com",
-    description: "API Access - Business Plan",
-    createdAt: "2025-03-24T11:15:22Z",
-    updatedAt: "2025-03-24T11:16:05Z",
+    id: "Detect",
+    label: "Detect",
+    value: 25,
+    color: "hsl(162, 70%, 50%)",
   },
   {
-    id: "tx-003",
-    amount: 29.99,
-    currency: "USD",
-    status: "failed",
-    paymentMethod: "credit_card",
-    userId: 3,
-    email: "bob@example.com",
-    description: "API Access - Basic Plan",
-    createdAt: "2025-03-24T12:05:33Z",
-    updatedAt: "2025-03-24T12:05:45Z",
-  }
+    id: "MpesaPayments",
+    label: "Mpesa Payments",
+    value: 15,
+    color: "hsl(291, 70%, 50%)",
+  },
+  {
+    id: "Other",
+    label: "Other APIs",
+    value: 15,
+    color: "hsl(229, 70%, 50%)",
+  },
 ];
