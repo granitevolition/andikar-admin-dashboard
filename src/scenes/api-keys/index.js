@@ -89,109 +89,46 @@ const ApiKeys = () => {
   const fetchApiKeys = async () => {
     setLoading(true);
     try {
-      // In a real application, we would call the API
-      // const response = await axios.get(\`\${process.env.REACT_APP_API_URL}/api-keys\`, {
-      //   headers: {
-      //     Authorization: \`Bearer \${localStorage.getItem('token')}\`
-      //   }
-      // });
-      // setApiKeys(response.data);
-      
-      // For now, let's set mock data
-      setApiKeys([
-        {
-          id: 1,
-          key: "andk_1abc123def456",
-          name: "Production Key",
-          permissions: ["humanize", "detect"],
-          user_id: 1,
-          created_at: "2025-02-15T09:30:00Z",
-          last_used: "2025-03-23T14:45:00Z",
-          status: "active"
-        },
-        {
-          id: 2,
-          key: "andk_2xyz789uvw012",
-          name: "Development Key",
-          permissions: ["humanize"],
-          user_id: 1,
-          created_at: "2025-02-20T11:15:00Z",
-          last_used: "2025-03-24T08:30:00Z",
-          status: "active"
-        },
-        {
-          id: 3,
-          key: "andk_3pqr456stu789",
-          name: "Test Key",
-          permissions: ["detect", "humanize", "payments"],
-          user_id: 2,
-          created_at: "2025-03-01T16:20:00Z",
-          last_used: null,
-          status: "inactive"
-        },
-      ]);
-      
+      const response = await axios.get(`${process.env.REACT_APP_API_URL}/api-keys`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`
+        }
+      });
+      setApiKeys(response.data);
       setLoading(false);
     } catch (err) {
       console.error("Error fetching API keys:", err);
       setError("Failed to fetch API keys. Please try again.");
+      setApiKeys([]);
       setLoading(false);
     }
   };
 
   const fetchUsers = async () => {
     try {
-      // In a real application, we would call the API
-      // const response = await axios.get(\`\${process.env.REACT_APP_API_URL}/users\`, {
-      //   headers: {
-      //     Authorization: \`Bearer \${localStorage.getItem('token')}\`
-      //   }
-      // });
-      // setUsers(response.data);
-      
-      // For now, let's set mock data
-      setUsers([
-        {
-          id: 1,
-          username: "johndoe",
-          email: "john@example.com",
-          full_name: "John Doe"
-        },
-        {
-          id: 2,
-          username: "janedoe",
-          email: "jane@example.com",
-          full_name: "Jane Doe"
-        },
-      ]);
+      const response = await axios.get(`${process.env.REACT_APP_API_URL}/users`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`
+        }
+      });
+      setUsers(response.data);
     } catch (err) {
       console.error("Error fetching users:", err);
+      setUsers([]);
     }
   };
 
   const handleCreateApiKey = async (values, actions) => {
     try {
-      // In a real application, we would call the API
-      // const response = await axios.post(\`\${process.env.REACT_APP_API_URL}/api-keys\`, values, {
-      //   headers: {
-      //     Authorization: \`Bearer \${localStorage.getItem('token')}\`
-      //   }
-      // });
+      const response = await axios.post(`${process.env.REACT_APP_API_URL}/api-keys`, values, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`
+        }
+      });
       
-      // For now, let's create mock response
-      const newKeyResponse = {
-        id: apiKeys.length + 1,
-        key: \`andk_\${Date.now().toString(36)}\`,
-        name: values.name,
-        permissions: values.permissions,
-        user_id: parseInt(values.user_id),
-        created_at: new Date().toISOString(),
-        last_used: null,
-        status: "active"
-      };
-      
-      setApiKeys([...apiKeys, newKeyResponse]);
-      setNewApiKey(newKeyResponse.key);
+      const newKeyData = response.data;
+      setApiKeys([...apiKeys, newKeyData]);
+      setNewApiKey(newKeyData.key);
       actions.resetForm();
     } catch (err) {
       console.error("Error creating API key:", err);
@@ -201,14 +138,12 @@ const ApiKeys = () => {
 
   const handleDeleteApiKey = async () => {
     try {
-      // In a real application, we would call the API
-      // await axios.delete(\`\${process.env.REACT_APP_API_URL}/api-keys/\${selectedApiKey.id}\`, {
-      //   headers: {
-      //     Authorization: \`Bearer \${localStorage.getItem('token')}\`
-      //   }
-      // });
+      await axios.delete(`${process.env.REACT_APP_API_URL}/api-keys/${selectedApiKey.id}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`
+        }
+      });
       
-      // For now, let's remove from our mock data
       const updatedApiKeys = apiKeys.filter(key => key.id !== selectedApiKey.id);
       
       setApiKeys(updatedApiKeys);
@@ -361,6 +296,12 @@ const ApiKeys = () => {
         </Button>
       </Box>
 
+      {error && (
+        <Alert severity="error" sx={{ mt: 2, mb: 2 }}>
+          {error}
+        </Alert>
+      )}
+
       <Box
         m="40px 0 0 0"
         height="75vh"
@@ -386,10 +327,10 @@ const ApiKeys = () => {
             backgroundColor: colors.blueAccent[700],
           },
           "& .MuiCheckbox-root": {
-            color: \`\${colors.greenAccent[200]} !important\`,
+            color: `${colors.greenAccent[200]} !important`,
           },
           "& .MuiDataGrid-toolbarContainer .MuiButton-text": {
-            color: \`\${colors.grey[100]} !important\`,
+            color: `${colors.grey[100]} !important`,
           },
         }}
       >
