@@ -14,6 +14,9 @@ import { ResponsiveLine } from "@nivo/line";
 import { ResponsiveBar } from "@nivo/bar";
 import { ResponsivePie } from "@nivo/pie";
 
+// Add this constant for dashboard mode
+const isDashboard = true;
+
 const Dashboard = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
@@ -32,7 +35,7 @@ const Dashboard = () => {
     const fetchDashboardData = async () => {
       try {
         // In a real application, we would make API calls to the backend
-        // const response = await axios.get(\`\${process.env.REACT_APP_API_URL}/dashboard\`);
+        // const response = await axios.get(`${process.env.REACT_APP_API_URL}/dashboard`);
         // setDashboardData(response.data);
         
         // For now, let's set some mock data
@@ -516,54 +519,5 @@ const Dashboard = () => {
     </Box>
   );
 };
-
-// Add this constant for dashboard mode
-const isDashboard = true;
-
-// Add mock transaction data for testing
-mockTransactions = [
-  {
-    txId: "tx-001",
-    user: "johndoe",
-    date: "2025-03-24",
-    cost: "43.95",
-  },
-  {
-    txId: "tx-002",
-    user: "janedoe",
-    date: "2025-03-23",
-    cost: "133.45",
-  },
-  {
-    txId: "tx-003",
-    user: "absmith",
-    date: "2025-03-23",
-    cost: "52.35",
-  },
-  {
-    txId: "tx-004",
-    user: "tmiller",
-    date: "2025-03-22",
-    cost: "21.55",
-  },
-  {
-    txId: "tx-005",
-    user: "bwilson",
-    date: "2025-03-21",
-    cost: "300.90",
-  },
-  {
-    txId: "tx-006",
-    user: "jmoore",
-    date: "2025-03-20",
-    cost: "43.95",
-  },
-  {
-    txId: "tx-007",
-    user: "ctaylor",
-    date: "2025-03-20",
-    cost: "110.95",
-  },
-];
 
 export default Dashboard;
