@@ -11,6 +11,7 @@ import {
   DialogContentText,
   DialogTitle,
   TextField,
+  Alert,
 } from "@mui/material";
 import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import { tokens } from "../../theme";
@@ -51,6 +52,7 @@ const Users = () => {
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
   const [error, setError] = useState(null);
+  const [successMessage, setSuccessMessage] = useState(null);
 
   const handleOpenDialog = (user = null) => {
     setSelectedUser(user);
@@ -78,46 +80,14 @@ const Users = () => {
 
   const fetchUsers = async () => {
     setLoading(true);
+    setError(null);
     try {
-      // In a real application, we would call the API
-      // const response = await axios.get(\`\${process.env.REACT_APP_API_URL}/users\`, {
-      //   headers: {
-      //     Authorization: \`Bearer \${localStorage.getItem('token')}\`
-      //   }
-      // });
-      // setUsers(response.data);
-      
-      // For now, let's set mock data
-      setUsers([
-        {
-          id: 1,
-          username: "johndoe",
-          email: "john@example.com",
-          full_name: "John Doe",
-          is_active: true,
-          role: "admin",
-          created_at: "2025-01-15T09:30:00Z"
-        },
-        {
-          id: 2,
-          username: "janedoe",
-          email: "jane@example.com",
-          full_name: "Jane Doe",
-          is_active: true,
-          role: "user",
-          created_at: "2025-01-20T10:15:00Z"
-        },
-        {
-          id: 3,
-          username: "bobsmith",
-          email: "bob@example.com",
-          full_name: "Bob Smith",
-          is_active: false,
-          role: "user",
-          created_at: "2025-02-05T14:25:00Z"
-        },
-      ]);
-      
+      const response = await axios.get(`${process.env.REACT_APP_API_URL}/users`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`
+        }
+      });
+      setUsers(response.data);
       setLoading(false);
     } catch (err) {
       console.error("Error fetching users:", err);
@@ -128,68 +98,74 @@ const Users = () => {
 
   const handleCreateUser = async (values, actions) => {
     try {
-      // In a real application, we would call the API
-      // const response = await axios.post(\`\${process.env.REACT_APP_API_URL}/users/register\`, values, {
-      //   headers: {
-      //     Authorization: \`Bearer \${localStorage.getItem('token')}\`
-      //   }
-      // });
+      const response = await axios.post(`${process.env.REACT_APP_API_URL}/users/register`, values, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`
+        }
+      });
       
-      // For now, let's just add to our mock data
-      const newUser = {
-        ...values,
-        id: users.length + 1,
-        created_at: new Date().toISOString()
-      };
-      
-      setUsers([...users, newUser]);
+      setUsers([...users, response.data]);
+      setSuccessMessage("User created successfully");
       handleCloseDialog();
       actions.resetForm();
+      
+      // Clear success message after 3 seconds
+      setTimeout(() => {
+        setSuccessMessage(null);
+      }, 3000);
     } catch (err) {
       console.error("Error creating user:", err);
-      setError("Failed to create user. Please try again.");
+      setError("Failed to create user. " + (err.response?.data?.detail || "Please try again."));
     }
   };
 
   const handleUpdateUser = async (values, actions) => {
     try {
-      // In a real application, we would call the API
-      // const response = await axios.put(\`\${process.env.REACT_APP_API_URL}/users/\${selectedUser.id}\`, values, {
-      //   headers: {
-      //     Authorization: \`Bearer \${localStorage.getItem('token')}\`
-      //   }
-      // });
+      const response = await axios.put(`${process.env.REACT_APP_API_URL}/users/${selectedUser.id}`, values, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`
+        }
+      });
       
-      // For now, let's update our mock data
       const updatedUsers = users.map(user => 
-        user.id === selectedUser.id ? { ...user, ...values } : user
+        user.id === selectedUser.id ? response.data : user
       );
       
       setUsers(updatedUsers);
+      setSuccessMessage("User updated successfully");
       handleCloseDialog();
+      
+      // Clear success message after 3 seconds
+      setTimeout(() => {
+        setSuccessMessage(null);
+      }, 3000);
     } catch (err) {
       console.error("Error updating user:", err);
-      setError("Failed to update user. Please try again.");
+      setError("Failed to update user. " + (err.response?.data?.detail || "Please try again."));
     }
   };
 
   const handleDeleteUser = async () => {
     try {
-      // In a real application, we would call the API
-      // await axios.delete(\`\${process.env.REACT_APP_API_URL}/users/\${selectedUser.id}\`, {
-      //   headers: {
-      //     Authorization: \`Bearer \${localStorage.getItem('token')}\`
-      //   }
-      // });
+      await axios.delete(`${process.env.REACT_APP_API_URL}/users/${selectedUser.id}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`
+        }
+      });
       
-      // For now, let's remove from our mock data
       const updatedUsers = users.filter(user => user.id !== selectedUser.id);
       
       setUsers(updatedUsers);
+      setSuccessMessage("User deleted successfully");
       handleCloseDeleteConfirm();
+      
+      // Clear success message after 3 seconds
+      setTimeout(() => {
+        setSuccessMessage(null);
+      }, 3000);
     } catch (err) {
       console.error("Error deleting user:", err);
-      setError("Failed to delete user. Please try again.");
+      setError("Failed to delete user. " + (err.response?.data?.detail || "Please try again."));
     }
   };
 
@@ -240,6 +216,11 @@ const Users = () => {
       renderCell: ({ row }) => {
         return (
           <Box display="flex" justifyContent="center">
+            <IconButton onClick={() => navigate(`/users/${row.id}`)}>
+              <Typography color={colors.grey[100]} sx={{ ml: "5px", mr: "5px" }}>
+                View
+              </Typography>
+            </IconButton>
             <IconButton onClick={() => handleOpenDialog(row)}>
               <EditIcon />
             </IconButton>
@@ -271,6 +252,18 @@ const Users = () => {
         </Button>
       </Box>
 
+      {error && (
+        <Alert severity="error" sx={{ mt: 2, mb: 2 }}>
+          {error}
+        </Alert>
+      )}
+
+      {successMessage && (
+        <Alert severity="success" sx={{ mt: 2, mb: 2 }}>
+          {successMessage}
+        </Alert>
+      )}
+
       <Box
         m="40px 0 0 0"
         height="75vh"
@@ -296,10 +289,10 @@ const Users = () => {
             backgroundColor: colors.blueAccent[700],
           },
           "& .MuiCheckbox-root": {
-            color: \`\${colors.greenAccent[200]} !important\`,
+            color: `${colors.greenAccent[200]} !important`,
           },
           "& .MuiDataGrid-toolbarContainer .MuiButton-text": {
-            color: \`\${colors.grey[100]} !important\`,
+            color: `${colors.grey[100]} !important`,
           },
         }}
       >
@@ -320,6 +313,7 @@ const Users = () => {
           onSubmit={selectedUser ? handleUpdateUser : handleCreateUser}
           initialValues={selectedUser || initialValues}
           validationSchema={userSchema}
+          enableReinitialize
         >
           {({
             values,
