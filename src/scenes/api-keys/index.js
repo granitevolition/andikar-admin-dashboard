@@ -274,7 +274,7 @@ const ApiKeys = () => {
           </Box>
         );
       },
-    },
+    }
   ];
 
   return (
